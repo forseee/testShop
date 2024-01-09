@@ -13,6 +13,7 @@ Internet Shop for Auto
 - `webpack5`
 - `styled-components`
 - `Node.js`
+- `Prisma ORM`
 
 ## Setup
 
