@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "jsx": "react",
+        "noEmitOnError": true,
+        "noUnusedLocals": false,
+        "removeComments": true,
+        "noImplicitAny": true,
+        "esModuleInterop": true,
+        "baseUrl": ".",
+        "paths": {
+            "@App": [
+                "src/App"
+            ],
+            "src/*": ["src/*"],
+        }
+    },
+    "exclude": [
+        "node_modules"
+    ]
+}
