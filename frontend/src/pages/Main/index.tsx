@@ -8,7 +8,6 @@ import AutoParts from "src/components/AutoParts";
 import { deleteAutoPart, getAutoParts, postAutoPart } from "src/shared/api";
 import { useDebounce } from "src/shared/hooks/useDebounce";
 import ShoppingCart from "src/components/ShoppingCart";
-import useTimer from "src/shared/hooks/useTimer";
 
 export type AutoPartsType = {
   id: number;
@@ -28,18 +27,6 @@ const Main = () => {
   const [filterValue, setFilterValue] = useState("");
   const [shoppingCart, setShoppingCart] = useState<ShoppingCart>(null);
   const debouncedVal = useDebounce(filterValue);
-
-  const storage = JSON.parse(localStorage.getItem("shoppingCart"));
-  const timeFromStorage = storage && storage.time;
-
-  // const time = useTimer(timeFromStorage, () => {
-  //   setShoppingCart(null);
-  //   localStorage.removeItem("shoppingCart");
-  // });
-
-  // console.log("time", time);
-
-  console.log("timeFromStorage", timeFromStorage);
 
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFilterValue(e.currentTarget.value);
