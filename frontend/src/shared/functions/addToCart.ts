@@ -1,40 +1,29 @@
-export const addToCartInLockalStorage = (id: number, name: string) => {
-  const shoppingCart: Array<{
-    id: number;
-    name: string;
-    value: number;
-  }> | null = JSON.parse(localStorage.getItem("shoppingCart"));
+import { ShoppingCartType } from "src/widgets/ShoppingCart";
 
-  const findElInShoppingCart =
-    shoppingCart && shoppingCart.find((item) => item.id === id);
-
-  if (findElInShoppingCart) {
-    const updateEl = {
-      ...findElInShoppingCart,
-      value: findElInShoppingCart.value + 1,
-    };
-    shoppingCart[
-      shoppingCart.findIndex((item) => item.id === findElInShoppingCart.id)
-    ] = updateEl;
-    localStorage.setItem("shoppingCart", JSON.stringify(shoppingCart));
-  } else {
-    const newEl = {
-      id,
-      name,
-      value: 1,
-    };
-
-    let newShoppingCart = [] as typeof shoppingCart;
-    if (shoppingCart) {
-      newShoppingCart = [...shoppingCart, newEl];
+export const addToCartNewItem = (
+  id: number,
+  name: string,
+  callback: (data: ShoppingCartType) => void,
+  shoppingCart: ShoppingCartType
+) => {
+  if (shoppingCart) {
+    const findEl = shoppingCart.data.find((item) => item.id === id);
+    if (findEl) {
+      const newEl = { ...findEl, value: findEl.value + 1 };
+      const newDate = [...shoppingCart.data];
+      newDate[shoppingCart.data.findIndex((item) => item.id === id)] = newEl;
+      callback({ ...shoppingCart, data: newDate });
     } else {
-      const currentTime = {
-        date: new Date(),
-      };
-      localStorage.setItem("shoppingCartTime", JSON.stringify(currentTime));
-      newShoppingCart = [newEl];
+      const newEl = { id, name, value: 1 };
+      callback({
+        ...shoppingCart,
+        data: [...shoppingCart.data, newEl],
+      });
     }
-
-    localStorage.setItem("shoppingCart", JSON.stringify(newShoppingCart));
+  } else {
+    const newEl = { id, name, value: 1 };
+    const currentDate = new Date();
+    currentDate.setMinutes(currentDate.getMinutes() + 2);
+    callback({ time: currentDate, data: [newEl] });
   }
 };

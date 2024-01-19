@@ -1,9 +1,15 @@
 import React, { useState } from "react";
-import Input from "../Input";
+import { UseMutateFunction } from "react-query";
 import styled from "styled-components";
 
+import Input from "../../components/Input";
+
 type FormForCreatingAutoPartProps = {
-  createAutoPart: (data: { name: string; price: number; img: string }) => void;
+  createAutoPart: UseMutateFunction<
+    any,
+    unknown,
+    { name: string; price: number; img: string }
+  >;
 };
 
 const FormForCreatingAutoPart: React.FC<FormForCreatingAutoPartProps> = ({
@@ -35,7 +41,6 @@ const FormForCreatingAutoPart: React.FC<FormForCreatingAutoPartProps> = ({
           id="name"
           value={name}
           onChange={(e) => {
-            console.log("e", e);
             setName(e.target.value);
           }}
         />

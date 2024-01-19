@@ -1,108 +1,24 @@
-import React, { useEffect, useLayoutEffect, useState } from "react";
+import React, { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import styled from "styled-components";
 
 import { Conteiner } from "src/assets/styles/globals";
-import FormForCreatingAutoPart from "src/components/FormForCreatingAutoPart";
-import AutoParts from "src/components/AutoParts";
+import FormForCreatingAutoPart from "src/widgets/FormForCreatingAutoPart";
+import AutoParts from "src/widgets/AutoParts";
 import { deleteAutoPart, getAutoParts, postAutoPart } from "src/shared/api";
 import { useDebounce } from "src/shared/hooks/useDebounce";
-import ShoppingCart from "src/components/ShoppingCart";
-
-export type AutoPartsType = {
-  id: number;
-  name: string;
-  img: string;
-  price: number;
-  createdAt: Date;
-};
-
-type ShoppingCart = {
-  time: Date;
-  data: Array<{ id: number; name: string; value: number }>;
-};
+import ShoppingCart, { ShoppingCartType } from "src/widgets/ShoppingCart";
+import { AutoPartsType } from "src/shared/api/autoParts/types";
 
 const Main = () => {
   const queryClient = useQueryClient();
   const [filterValue, setFilterValue] = useState("");
-  const [shoppingCart, setShoppingCart] = useState<ShoppingCart>(null);
+  const [shoppingCart, setShoppingCart] = useState<ShoppingCartType>(null);
   const debouncedVal = useDebounce(filterValue);
 
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFilterValue(e.currentTarget.value);
   };
-
-  // Проверка даты
-  useEffect(() => {
-    if (
-      shoppingCart &&
-      new Date(shoppingCart.time).getTime() < new Date().getTime()
-    ) {
-      setShoppingCart(null);
-      localStorage.removeItem("shoppingCart");
-    } else {
-    }
-  }, [shoppingCart]);
-
-  // Таймер
-  useEffect(() => {
-    let intervalId: NodeJS.Timeout;
-    if (shoppingCart && shoppingCart.time) {
-      intervalId = setInterval(() => {
-        console.log("date", new Date());
-        if (new Date(shoppingCart.time).getTime() <= new Date().getTime()) {
-          setShoppingCart(null);
-          localStorage.removeItem("shoppingCart");
-        }
-      }, 1000);
-    }
-
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, [shoppingCart]);
-
-  // Добавляем в корзину
-  const addToCart = (id: number, name: string) => {
-    if (shoppingCart) {
-      const findEl = shoppingCart.data.find((item) => item.id === id);
-      if (findEl) {
-        const newEl = { ...findEl, value: findEl.value + 1 };
-        const newDate = [...shoppingCart.data];
-        newDate[shoppingCart.data.findIndex((item) => item.id === id)] = newEl;
-        setShoppingCart({ ...shoppingCart, data: newDate });
-      } else {
-        const newEl = { id, name, value: 1 };
-        setShoppingCart({
-          ...shoppingCart,
-          data: [...shoppingCart.data, newEl],
-        });
-      }
-    } else {
-      const newEl = { id, name, value: 1 };
-      const currentDate = new Date();
-      currentDate.setMinutes(currentDate.getMinutes() + 2);
-      setShoppingCart({ time: currentDate, data: [newEl] });
-    }
-  };
-
-  // Добавляем изменения корзины в lockalStorage
-  useEffect(() => {
-    if (shoppingCart) {
-      localStorage.setItem("shoppingCart", JSON.stringify(shoppingCart));
-    }
-  }, [shoppingCart]);
-
-  // При загрузки страницы проверяем lockalStorage
-  useLayoutEffect(() => {
-    const shoppingCartStorage = JSON.parse(
-      localStorage.getItem("shoppingCart")
-    );
-
-    if (shoppingCartStorage) {
-      setShoppingCart(shoppingCartStorage);
-    }
-  }, []);
 
   // Получение автозапчастей
   const {
@@ -147,17 +63,19 @@ const Main = () => {
         <Flex>
           <AutoParts
             data={autoPartsData}
+            shoppingCart={shoppingCart}
             isLoading={isLoading}
             isError={isError}
             filterValue={filterValue}
             searchOnChange={handleOnChange}
             deleteAutoPart={mutateDeleteAutoPart}
-            addToCart={addToCart}
+            setShoppingCart={setShoppingCart}
           />
           <BoxForFormAndCartStyled>
             <FormForCreatingAutoPart createAutoPart={mutateCreateAutoPart} />
             <ShoppingCart
-              shoppingCartItems={shoppingCart ? shoppingCart.data : null}
+              shoppingCart={shoppingCart}
+              setShoppingCart={setShoppingCart}
             />
           </BoxForFormAndCartStyled>
         </Flex>

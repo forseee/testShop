@@ -1,6 +1,8 @@
 import React from "react";
-import { AutoPartsType } from "src/pages/Main";
 import styled from "styled-components";
+
+import { AutoPartsType } from "src/shared/api/autoParts/types";
+
 import Button from "../Button";
 
 interface AutoPartsListProps {
@@ -14,6 +16,7 @@ export const AutoPartsList: React.FC<AutoPartsListProps> = ({
   delitePart,
   addToCart,
 }) => {
+
   return (
     <ItemsList>
       {parts.map((item) => (

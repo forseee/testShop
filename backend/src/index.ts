@@ -29,7 +29,7 @@ app.delete("/products/:id", async (req: Request, res: Response) => {
   }
 });
 
-app.get("/products", async (req: Request, res: Response) => {
+app.get("/products/", async (req: Request, res: Response) => {
   const { search } = req.query;
   try {
     const deleteProduct = await prisma.product.findMany({

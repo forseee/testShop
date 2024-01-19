@@ -1,10 +1,12 @@
 import React from "react";
 import styled from "styled-components";
 
-import { AutoPartsType } from "src/pages/Main";
+import { AutoPartsType } from "src/shared/api/autoParts/types";
 
-import Input from "../Input";
-import { AutoPartsList } from "../AutoPartsList";
+import Input from "../../components/Input";
+import { AutoPartsList } from "../../components/AutoPartsList";
+import { ShoppingCartType } from "../ShoppingCart";
+import { addToCartNewItem } from "src/shared/functions/addToCart";
 
 type AutoPartsProps = {
   data: Array<AutoPartsType>;
@@ -13,7 +15,8 @@ type AutoPartsProps = {
   filterValue: string;
   searchOnChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   deleteAutoPart: (id: number) => void;
-  addToCart: (id: number, name: string) => void;
+  shoppingCart: ShoppingCartType;
+  setShoppingCart: (data: ShoppingCartType) => void;
 };
 
 const AutoParts: React.FC<AutoPartsProps> = ({
@@ -23,8 +26,14 @@ const AutoParts: React.FC<AutoPartsProps> = ({
   filterValue,
   searchOnChange,
   deleteAutoPart,
-  addToCart,
+  shoppingCart,
+  setShoppingCart,
 }) => {
+  // Добавляем в корзину
+  const addToCart = (id: number, name: string) => {
+    addToCartNewItem(id, name, setShoppingCart, shoppingCart);
+  };
+
   return (
     <Box>
       <Input

@@ -6,27 +6,32 @@ const HOUR = MINUTE * 60;
 const DAY = HOUR * 24;
 
 export default function useTimer(
-  deadline: Date | null,
+  deadlineTime: Date | null,
   callback: () => void,
-  interval = SECOND
+  delay = SECOND
 ) {
   const [timespan, setTimespan] = useState(
-    deadline.getTime() - new Date().getTime()
+    new Date(deadlineTime).getTime() - new Date().getTime()
   );
 
   useEffect(() => {
-    const intervalId = setInterval(() => {
-      setTimespan(new Date(deadline).getTime() - Date.now());
-    }, interval);
-
-    if (timespan === 0) {
-      callback();
+    let interval: NodeJS.Timeout;
+    if (!deadlineTime) {
+      setTimespan(0);
     }
-
+    if (deadlineTime) {
+      interval = setInterval(() => {
+        if (new Date(deadlineTime).getTime() <= new Date().getTime()) {
+          callback();
+        }
+        setTimespan(new Date(deadlineTime).getTime() - new Date().getTime());
+      }, delay);
+    } else {
+    }
     return () => {
-      clearInterval(intervalId);
+      clearInterval(interval);
     };
-  }, [deadline, interval]);
+  }, [deadlineTime, delay]);
 
   return {
     days: Math.floor(timespan / DAY),
